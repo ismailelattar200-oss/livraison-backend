@@ -23,7 +23,9 @@ use App\Http\Controllers\Admin\DeliveryController as AdminDeliveryController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\StatsController as AdminStatsController;
+use App\Http\Controllers\Admin\DashboardAiController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Delivery\DeliveryAiController;
 use App\Models\User;
 
 // ── Auth ────────────────────────────────────────────────────────
@@ -68,8 +70,18 @@ Route::post('/chat', [AiController::class, 'chat']);
 // ── Admin Routes (Protected via Sanctum) ────────────────────────
 Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     
-    // Stats
+    // Stats & AI Agent Dashboard
     Route::get('/stats', [AdminStatsController::class, 'index']);
+    Route::get('/driver-alerts', [DashboardAiController::class, 'driverAlerts']);
+    Route::get('/performance-analytics', [DashboardAiController::class, 'performanceAnalytics']);
+    Route::get('/ai-recommendations', [DashboardAiController::class, 'aiRecommendations']);
+    Route::get('/promotions', [DashboardAiController::class, 'promotionsIndex']);
+    Route::post('/promotions', [DashboardAiController::class, 'promotionsStore']);
+    Route::get('/promotions/ai-suggestions', [DashboardAiController::class, 'promotionsSuggestions']);
+    Route::get('/live-tracking', [DashboardAiController::class, 'liveTracking']);
+    Route::get('/feedbacks', [DashboardAiController::class, 'feedbacksIndex']);
+    Route::get('/feedbacks/ai-summary', [DashboardAiController::class, 'feedbacksSummary']);
+    Route::get('/revenue-analytics', [DashboardAiController::class, 'revenueAnalytics']);
 
     // Categories
     Route::get('/categories', [AdminCategoryController::class, 'index']);
@@ -128,6 +140,14 @@ Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
     Route::post('/users', [AdminUserController::class, 'store']);
     Route::put('/users/{user}', [AdminUserController::class, 'update']);
     Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+});
+
+// ── Delivery AI Agent Routes ────────────────────────────────────
+Route::prefix('delivery')->group(function () {
+    Route::get('/unified-dashboard', [DeliveryAiController::class, 'unifiedDashboard']);
+    Route::post('/orders/{id}/accept', [DeliveryAiController::class, 'acceptOrder']);
+    Route::post('/orders/{id}/reject', [DeliveryAiController::class, 'rejectOrder']);
+    Route::put('/orders/{id}/status', [DeliveryAiController::class, 'updateStatus']);
 });
 
 
